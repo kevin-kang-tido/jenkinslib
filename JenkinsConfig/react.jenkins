@@ -1,0 +1,27 @@
+@Library(['jenkinslib']) _
+pipeline {
+    agent any
+
+    stages {
+        stage('Git Clone') {
+            steps {
+                git branch: 'main', url: 'https://gitlab.com/ite-2nd-cstad/kak-mobile-banking-api.git'
+            }
+        }
+        
+        stage('Call function call apiWithGroovy Write Docker file to git repo') {
+            steps {
+                script{
+                    apiWithDocker()
+                }
+            }
+        }
+        stage('list directory') {
+            steps {
+                sh '''
+                ls -lrt
+                '''
+            }
+        }
+    }
+}

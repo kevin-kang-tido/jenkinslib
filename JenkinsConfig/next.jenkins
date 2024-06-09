@@ -1,0 +1,32 @@
+@Library(['jenkinslib']) _
+pipeline {
+    agent any
+
+    stages {
+        stage('Git Clone') {
+            steps {
+                git 'https://github.com/MuyleangIng/nextjs_docker.git'
+            }
+        }
+        
+        stage('Call function call apiWithGroovy Write Docker file to git repo') {
+            steps {
+                script{
+                    nextWithDocker(
+                        DOCKER_USER='pisethsattya',
+                        DOCKER_PASS='Admin@12345',
+                        TAGS=$BUILD_NUMBER,
+                        IMAGE_NAME='nextjs_docker'
+                    )
+                }
+            }
+        }
+        stage('list directory') {
+            steps {
+                sh '''
+                ls -lrt
+                '''
+            }
+        }
+    }
+}
