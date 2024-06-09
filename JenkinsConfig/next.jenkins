@@ -13,8 +13,6 @@ pipeline {
             steps {
                 script{
                     nextWithDocker(
-                        DOCKER_USER='pisethsattya',
-                        DOCKER_PASS='Admin@12345',
                         TAGS=${env.BUILD_NUMBER},
                         IMAGE_NAME='nextjs-docker'
                     )
