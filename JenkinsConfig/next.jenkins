@@ -11,11 +11,23 @@ pipeline {
         
         stage('Call function call apiWithGroovy Write Docker file to git repo') {
             steps {
-                script{
-                    nextWithDocker(
-                        TAGS=${env.BUILD_NUMBER},
-                        IMAGE_NAME='nextjs-docker'
-                    )
+                  script {
+                    try {
+                        // Validate required parameters
+                        def TAGS = env.BUILD_NUMBER
+                        def IMAGE_NAME = 'nextjs-docker'
+                        
+                        if (!TAGS || !IMAGE_NAME) {
+                            throw new IllegalArgumentException("Missing required parameters for Docker.")
+                        }
+
+                        // Call function nextWithDocker
+                        nextWithDocker(TAGS: TAGS, IMAGE_NAME: IMAGE_NAME)
+                    } catch (Exception e) {
+                        echo "An error occurred: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        error("Pipeline failed due to an error.")
+                    }
                 }
             }
         }
