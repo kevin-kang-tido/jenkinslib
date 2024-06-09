@@ -13,6 +13,8 @@ pipeline {
                 script {
                     try {
                         // Validate required parameters
+                        def DOCKER_USER = 'pisethsattya'
+                        def DOCKER_PASS = 'Admin@12345'
                         def TAGS = env.BUILD_NUMBER
                         def IMAGE_NAME = 'nextjs-docker'
                         
@@ -21,7 +23,7 @@ pipeline {
                         }
 
                         // Call function nextWithDocker with separate arguments
-                        nextWithDocker(TAGS, IMAGE_NAME)
+                        nextWithDocker(DOCKER_USER,DOCKER_PASS,TAGS, IMAGE_NAME)
                     } catch (Exception e) {
                         echo "An error occurred: ${e.message}"
                         currentBuild.result = 'FAILURE'
