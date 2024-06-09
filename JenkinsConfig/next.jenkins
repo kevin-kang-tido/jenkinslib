@@ -8,10 +8,9 @@ pipeline {
                 git 'https://github.com/MuyleangIng/nextjs_docker.git'
             }
         }
-        
         stage('Call function call apiWithGroovy Write Docker file to git repo') {
             steps {
-                  script {
+                script {
                     try {
                         // Validate required parameters
                         def TAGS = env.BUILD_NUMBER
@@ -21,8 +20,8 @@ pipeline {
                             throw new IllegalArgumentException("Missing required parameters for Docker.")
                         }
 
-                        // Call function nextWithDocker
-                        nextWithDocker(TAGS: TAGS, IMAGE_NAME: IMAGE_NAME)
+                        // Call function nextWithDocker with separate arguments
+                        nextWithDocker(TAGS, IMAGE_NAME)
                     } catch (Exception e) {
                         echo "An error occurred: ${e.message}"
                         currentBuild.result = 'FAILURE'
@@ -30,7 +29,8 @@ pipeline {
                     }
                 }
             }
-        }
+}
+
         stage('list directory') {
             steps {
                 sh '''
