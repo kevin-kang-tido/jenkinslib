@@ -15,7 +15,7 @@ pipeline {
                     nextWithDocker(
                         DOCKER_USER='pisethsattya',
                         DOCKER_PASS='Admin@12345',
-                        TAGS=$BUILD_NUMBER,
+                        TAGS=BUILD_NUMBER,
                         IMAGE_NAME='nextjs_docker'
                     )
                 }
