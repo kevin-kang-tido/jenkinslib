@@ -5,10 +5,6 @@ def call(String DOCKER_USER,String DOCKER_PASS,String TAGS, String IMAGE_NAME) {
             throw new IllegalArgumentException("Missing required parameters for Docker.")
         }
 
-        // Load Dockerfile content from the library
-        def dockerfileContent = libraryResource('next.dockerfile')
-        writeFile file: 'Dockerfile', text: dockerfileContent
-
         // Docker build
         sh "docker build -t ${DOCKER_USER}/${IMAGE_NAME}:${TAGS} ."
 
