@@ -14,7 +14,7 @@ def call(Map config = [:]) {
         stages {
             stage('Git Clone') {
                 steps {
-                    git branch: 'main', url: 'https://github.com/SattyaPiseth/jenkins-with-angular.git'
+                    git branch: 'main', url: 'https://github.com/SattyaPiseth/angular-muyleang-ing.git'
                 }
             }
 
