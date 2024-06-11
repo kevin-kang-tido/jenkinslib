@@ -1,6 +1,4 @@
 def call(Map config = [:]) {
-    def dockerfileContent = libraryResource 'angular.dockerfile'
-    writeFile file: 'Dockerfile', text: dockerfileContent
     // Default values
     def image = config.get('image', 'my-default-image')
     def registry = config.get('registry', 'my-default-registry')
