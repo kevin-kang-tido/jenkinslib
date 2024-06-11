@@ -1,4 +1,3 @@
-groovyCopy code
 def call(Map config = [:]) {
     // Default values
     def image = config.get('image', 'my-default-image')
@@ -11,51 +10,4 @@ def call(Map config = [:]) {
         def dockerfileContent = libraryResource('angular.dockerfile')
         writeFile file: 'Dockerfile', text: dockerfileContent
 
-    pipeline {
-        agent any
-
-        stages {
-            stage('Git Clone') {
-                steps {
-                    git branch: 'main', url: 'https://github.com/SattyaPiseth/jenkinslib.git'
-                }
-            }
-
-            stage('Build Docker Image') {
-                steps {
-                    script {
-                        echo "Building Docker image: ${registry}/${image}:${tag}"
-                        sh """
-                            docker build -t ${registry}/${image}:${tag} .
-                            docker rm -f ${image}
-                        """
-                    }
-                }
-            }
-
-            stage('Docker hub login'){
-                steps{
-                    script{
-                        withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-                            sh """
-                                docker login -u ${USER} -p ${PASS}
-                                docker push ${registry}/${image}:${tag}
-                            """
-                        }
-                    }
-                }
-            }
-
-            stage('Deploy Docker Container') {
-                steps {
-                    script {
-                        echo "Deploying Docker container: ${registry}/${image}:${tag}"
-                        sh """
-                            docker run -d -p ${hostPort}:${containerPort} --name ${image} ${registry}/${image}:${tag}
-                        """
-                    }
-                }
-            }
-        }
-    }
 }
