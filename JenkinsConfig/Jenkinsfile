@@ -1,0 +1,9 @@
+@Library('jenkinslib') _
+
+buildAndDeploy(
+    image: 'my-app-image',
+    registry: 'my-docker-registry',
+    tag: '1.0.0',
+    containerPort: '8080',
+    hostPort: '9090'
+)
