@@ -5,9 +5,4 @@ def call(Map config = [:]) {
     def tag = config.get('tag', 'latest')
     def containerPort = config.get('containerPort', '8080')
     def hostPort = config.get('hostPort', '8080')
-
-    // Load Dockerfile content from the library
-        def dockerfileContent = libraryResource('angular.dockerfile')
-        writeFile file: 'Dockerfile', text: dockerfileContent
-
 }
