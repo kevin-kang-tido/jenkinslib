@@ -1,57 +1,71 @@
 def call(Map config = [:]) {
-    // Default values
-    def image = config.get('image', 'my-default-image')
-    def registry = config.get('registry', 'my-default-registry')
-    def tag = config.get('tag', 'latest')
-    def containerPort = config.get('containerPort', '8080')
-    def hostPort = config.get('hostPort', '8080')
+    try {
+        // Load the Dockerfile content from the library resource
+        def dockerfileContent = libraryResource 'angular.dockerfile'
+        writeFile file: 'Dockerfile', text: dockerfileContent
 
-    pipeline {
-        agent any
+        // Set default values with Groovy's elvis operator
+        def image = config.get('image') ?: 'my-default-image'
+        def registry = config.get('registry') ?: 'my-default-registry'
+        def tag = config.get('tag') ?: 'latest'
+        def containerPort = config.get('containerPort') ?: '8080'
+        def hostPort = config.get('hostPort') ?: '8080'
 
-        stages {
-            stage('Git Clone') {
-                steps {
-                    git branch: 'main', url: 'https://github.com/SattyaPiseth/angular-muyleang-ing.git'
-                }
-            }
+        pipeline {
+            agent any
 
-            stage('Build Docker Image') {
-                steps {
-                    script {
-                    echo "Building Docker image: ${registry}/${image}:${tag}"
-                    
-                        sh """
-                            docker build -t ${registry}/${image}:${tag} .
-                            docker rm -f ${image}
-                        """
+            stages {
+                stage('Git Clone') {
+                    steps {
+                        script {
+                            // Add your Git clone steps here
+                            echo 'Cloning Git repository...'
+                            // Example:
+                            // git url: 'https://your-repo-url.git', branch: 'main'
+                        }
                     }
                 }
-            }
 
-            stage('Docker hub login'){
-                steps{
-                    script{
-                        withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                // Add more stages as required
+
+                stage('Build Docker Image') {
+                    steps {
+                        script {
+                            echo 'Building Docker image...'
                             sh """
-                                docker login -u ${USER} -p ${PASS}
-                                docker push ${registry}/${image}:${tag}
+                                docker build -t ${registry}/${image}:${tag} .
                             """
                         }
                     }
                 }
+
+                stage('Run Docker Container') {
+                    steps {
+                        script {
+                            echo 'Running Docker container...'
+                            sh """
+                                docker run -d -p ${hostPort}:${containerPort} ${registry}/${image}:${tag}
+                            """
+                        }
+                    }
+                }
+
+                // Add more stages as required
             }
 
-            stage('Deploy Docker Container') {
-                steps {
-                    script {
-                        echo "Deploying Docker container: ${registry}/${image}:${tag}"
-                        sh """
-                            docker run -d -p ${hostPort}:${containerPort} --name ${image} ${registry}/${image}:${tag}
-                        """
-                    }
+            post {
+                always {
+                    echo 'Pipeline finished.'
+                }
+                success {
+                    echo 'Pipeline succeeded.'
+                }
+                failure {
+                    echo 'Pipeline failed.'
                 }
             }
         }
+    } catch (Exception e) {
+        error "Pipeline execution failed: ${e.message}"
     }
 }

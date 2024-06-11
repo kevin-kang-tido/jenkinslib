@@ -1,6 +1,4 @@
 @Library('jenkinslib') _
-def dockerfileContent = libraryResource 'angular.dockerfile'
-writeFile file: 'Dockerfile', text: dockerfileContent
 
 buildAndDeploy(
     image: 'angular-docker',
