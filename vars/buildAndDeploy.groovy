@@ -30,8 +30,7 @@ def call(Map config = [:]) {
                         script {
                             // Add your Git clone steps here
                             echo 'Cloning Git repository...'
-                            // Example:
-                            // git url: 'https://your-repo-url.git', branch: 'main'
+                             git branch: 'main', url: 'https://github.com/SattyaPiseth/angular-muyleang-ing.git'
                         }
                     }
                 }
