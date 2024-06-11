@@ -1,9 +1,5 @@
 def call(Map config = [:]) {
     try {
-        // Load the Dockerfile content from the library resource
-        def dockerfileContent = libraryResource 'angular.dockerfile'
-        writeFile file: 'Dockerfile', text: dockerfileContent
-
         // Set default values with Groovy's elvis operator
         def image = config.get('image') ?: 'my-default-image'
         def registry = config.get('registry') ?: 'my-default-registry'
@@ -15,6 +11,20 @@ def call(Map config = [:]) {
             agent any
 
             stages {
+                stage('Prepare Dockerfile') {
+                    steps {
+                        script {
+                            // Load the Dockerfile content from the library resource
+                            def dockerfileContent = libraryResource 'angular.dockerfile'
+                            
+                            // Ensure this step is wrapped in a node block
+                            node {
+                                writeFile file: 'Dockerfile', text: dockerfileContent
+                            }
+                        }
+                    }
+                }
+
                 stage('Git Clone') {
                     steps {
                         script {
@@ -25,8 +35,6 @@ def call(Map config = [:]) {
                         }
                     }
                 }
-
-                // Add more stages as required
 
                 stage('Build Docker Image') {
                     steps {
