@@ -11,7 +11,7 @@ COPY package*.json ./
 RUN npm install
 
 # Copy the rest of the application files (excluding node_modules)
-COPY . . .npm
+COPY . . 
 
 # Cache node_modules to speed up future builds
 RUN npm cache ci --force
