@@ -1,4 +1,4 @@
-# Use a lightweight Node.js image as base
+# Stage 1: Build the application
 FROM node:alpine AS builder
 
 # Set the working directory
@@ -13,7 +13,6 @@ RUN npm ci --only=production
 # Copy the rest of the application code
 COPY . .
 
-RUN npm install
 # Build the Next.js application
 RUN npm run build
 
@@ -23,7 +22,7 @@ FROM node:alpine
 # Set the working directory
 WORKDIR /app
 
-# Copy only the built artifacts from the previous stage
+# Copy only the built artifacts and essential files from the previous stage
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
