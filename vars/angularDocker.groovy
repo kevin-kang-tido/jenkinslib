@@ -5,15 +5,15 @@ def call(Map config = [:]) {
     def tag = config.get('tag', 'latest')
     def containerPort = config.get('containerPort', '8080')
     def hostPort = config.get('hostPort', '8080')
-    def projectName = config.get('projectName','angular-muyleang-ing')
-    
+    def projectName = config.get('projectName', 'angular-muyleang-ing')
+
     pipeline {
         agent any
 
         stages {
             stage('Git Clone') {
                 steps {
-                    git branch: 'main', url: 'https://github.com/SattyaPiseth/angular-muyleang-ing.git'
+                    git branch: 'main', url: 'https://github.com/SattyaPiseth/angular-framework.git'
                 }
             }
 
@@ -34,7 +34,7 @@ def call(Map config = [:]) {
                     script {
                         echo "Building Docker image: ${registry}/${image}:${tag}"
                         sh """
-                            docker build --build-arg PROJECT_NAME=${projectName}} -t ${registry}/${image}:${tag} .
+                            docker build --build-arg PROJECT_NAME=${projectName} -t ${registry}/${image}:${tag} .
                         """
                     }
                 }

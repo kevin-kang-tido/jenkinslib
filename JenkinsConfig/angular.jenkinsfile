@@ -1,10 +1,10 @@
 @Library(['jenkinslib']) _
 
 angularDocker(
-    image: 'angular-muyleang-ing',
+    image: 'angular-framework',
     registry: 'pisethsattya',
     tag: '2.0',
     containerPort: '80',
     hostPort: '4000',
-    projectName: 'angular-muyleang-ing'
+    projectName: 'angular-framework'
 )
