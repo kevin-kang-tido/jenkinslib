@@ -39,30 +39,30 @@ def call(Map config = [:]) {
                 }
             }
 
-            // stage('Docker Hub Login and Push') {
-            //     steps {
-            //         script {
-            //             withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-            //                 sh """
-            //                     docker login -u ${USER} -p ${PASS}
-            //                     docker push ${registry}/${image}:${tag}
-            //                 """
-            //             }
-            //         }
-            //     }
-            // }
+            stage('Docker Hub Login and Push') {
+                steps {
+                    script {
+                        withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                            sh """
+                                docker login -u ${USER} -p ${PASS}
+                                docker push ${registry}/${image}:${tag}
+                            """
+                        }
+                    }
+                }
+            }
 
-            // stage('Deploy Docker Container') {
-            //     steps {
-            //         script {
-            //             echo "Deploying Docker container: ${registry}/${image}:${tag}"
-            //             sh """
-            //                 docker rm -f ${image} || true
-            //                 docker run -d -p ${hostPort}:${containerPort} --name ${image} ${registry}/${image}:${tag}
-            //             """
-            //         }
-            //     }
-            // }
+            stage('Deploy Docker Container') {
+                steps {
+                    script {
+                        echo "Deploying Docker container: ${registry}/${image}:${tag}"
+                        sh """
+                            docker rm -f ${image} || true
+                            docker run -d -p ${hostPort}:${containerPort} --name ${image} ${registry}/${image}:${tag}
+                        """
+                    }
+                }
+            }
         }
     }
 }
