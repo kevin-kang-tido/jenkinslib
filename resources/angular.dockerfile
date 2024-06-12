@@ -14,8 +14,7 @@ RUN npm install --silent
 COPY . .
 
 # Build the Angular application
-ARG PROJECT_NAME
-RUN npm run build --prod -- --output-path=dist/${PROJECT_NAME}/browser
+RUN npm run build --prod
 
 # Stage 2: Serve the application with NGINX
 FROM nginx:stable-alpine
