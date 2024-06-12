@@ -37,20 +37,6 @@ COPY --from=build /app/dist /usr/share/nginx/html
 # Copy the production node_modules (if needed by the application, though typically not needed for purely static sites)
 COPY --from=production-env /app/node_modules /app/node_modules
 
-# Add a minimal Nginx configuration
-# RUN echo 'server { \
-#     listen 80; \
-#     server_name localhost; \
-#     location / { \
-#         root /usr/share/nginx/html; \
-#         try_files $uri $uri/ /index.html; \
-#     } \
-#     error_page 500 502 503 504 /50x.html; \
-#     location = /50x.html { \
-#         root /usr/share/nginx/html; \
-#     } \
-# }' > /etc/nginx/conf.d/default.conf
-
 # Expose the port the app runs on
 EXPOSE 80
 
