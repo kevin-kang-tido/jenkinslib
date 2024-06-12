@@ -1,33 +1,32 @@
-# Use a lightweight Node.js image as the base
-FROM node:lts-alpine AS builder
+# Use Node.js LTS Alpine as the base image for both stages
+FROM node:lts-alpine AS build-stage
 
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if using)
+# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm ci --only=production
 
-# Copy the rest of the application files (excluding node_modules)
-COPY . . 
+# Copy the rest of the application code to the working directory
+COPY . .
 
-# Cache node_modules to speed up future builds
-RUN npm cache ci --force
+# Build the Nuxt.js application for production
+RUN npm run build
 
-# Switch to a smaller runtime image for the final container
-FROM node:lts-alpine AS runner
+# Use a smaller base image for the production stage
+FROM node:lts-alpine AS production-stage
 
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy only the production-ready files from the build stage
-COPY --from=builder /app/.nuxt/dist/process.env ./
-COPY --from=builder /app/.nuxt/dist/client /app
+# Copy the built app from the build stage
+COPY --from=build-stage /app .
 
-# Expose the default Nuxt port (3000)
+# Expose port 3000 to the outside world
 EXPOSE 3000
 
-# Start the Nuxt server in production mode
-CMD [ "npm", "start" ]
+# Command to run the Nuxt.js server
+CMD ["node", ".output/server/index.mjs"]
