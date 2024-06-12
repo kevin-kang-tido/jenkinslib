@@ -20,7 +20,7 @@ RUN npm run build
 FROM nginx:alpine as production-stage
 
 # Copy the built app from the previous stage to the NGINX directory
-COPY --from=build-stage /app/dist /usr/share/nginx/html
+COPY --from=build-stage /app/.nuxt/dist /usr/share/nginx/html
 
 # Expose port 80 to the outside world
 EXPOSE 80
