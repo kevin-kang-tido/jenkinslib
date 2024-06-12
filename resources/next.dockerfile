@@ -22,9 +22,6 @@ FROM nginx:alpine
 # Copy the built Next.js application from the previous stage to Nginx directory
 COPY --from=build /app/.next /usr/share/nginx/html
 
-# Copy nginx configuration file
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
-
 # Expose the port Nginx listens on
 EXPOSE 80
 
