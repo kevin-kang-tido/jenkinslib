@@ -1,14 +1,14 @@
-# Stage 1: Build Stage
-FROM node:18-alpine AS builder
+# Stage 1: Build the Vue.js application
+FROM node:16.14-alpine AS build
 
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock) to the working directory
+# Copy package.json and package-lock.json for dependency installation
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install all dependencies (including dev dependencies)
+RUN npm ci
 
 # Copy the rest of the application source code
 COPY . .
@@ -16,28 +16,29 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Stage 2: Production Stage
-FROM node:18-alpine
+# Stage 2: Prepare the production environment
+FROM node:16.14-alpine AS production-env
 
 # Set the working directory
 WORKDIR /app
 
-# Install only production dependencies
+# Copy only the package.json and package-lock.json
 COPY package*.json ./
-RUN npm install --only=production
 
-# Copy necessary files from the build stage
-COPY --from=builder /app/.nuxt ./.nuxt
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/nuxt.config.js ./nuxt.config.js
-COPY --from=builder /app/static ./static
+# Install only production dependencies
+RUN npm ci --only=production
 
-# Ensure optional files are handled appropriately
-RUN if [ ! -f ./nuxt.config.js ]; then echo "nuxt.config.js not found, skipping..."; fi \
-    && if [ ! -d ./static ]; then echo "static directory not found, skipping..."; fi
+# Stage 3: Serve the built application with Nginx
+FROM nginx:1.21-alpine
+
+# Copy the built files from the build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy the production node_modules (if needed by the application, though typically not needed for purely static sites)
+COPY --from=production-env /app/node_modules /app/node_modules
 
 # Expose the port the app runs on
-EXPOSE 3000
+EXPOSE 80
 
-# Define the default command to run the application
-CMD ["npm", "start"]
+# Start Nginx server
+CMD ["nginx", "-g", "daemon off;"]
