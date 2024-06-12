@@ -1,5 +1,5 @@
 # Use a lightweight base image for both stages
-FROM node:lts-alpine AS build-stage
+FROM node:current-slim AS build-stage
 
 # Set the working directory in the container
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Use an even smaller base image for the production stage
-FROM node:lts-alpine AS production-stage
+FROM node:current-slim AS production-stage
 
 # Set the working directory in the container
 WORKDIR /app
