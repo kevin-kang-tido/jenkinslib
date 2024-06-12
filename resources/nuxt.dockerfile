@@ -22,12 +22,6 @@ FROM nginx:alpine as production-stage
 # Copy the built app from the previous stage to the NGINX directory
 COPY --from=build-stage /app/.nuxt/dist/client /usr/share/nginx/html
 
-# Remove default NGINX configuration file
-RUN rm /etc/nginx/conf.d/default.conf
-
-# Copy custom NGINX configuration
-COPY nginx/nginx.conf /etc/nginx/conf.d
-
 # Expose port 80 to the outside world
 EXPOSE 80
 
