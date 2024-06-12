@@ -21,7 +21,7 @@ FROM nginx:alpine
 
 # Copy the build output to Nginx's html directory
 COPY --from=builder /app/.nuxt /usr/share/nginx/html/.nuxt
-COPY --from=builder /app/static /usr/share/nginx/html/static
+# COPY --from=builder /app/static /usr/share/nginx/html/static
 COPY --from=builder /app/nuxt.config.js /usr/share/nginx/html/nuxt.config.js
 COPY --from=builder /app/package.json /usr/share/nginx/html/package.json
 
