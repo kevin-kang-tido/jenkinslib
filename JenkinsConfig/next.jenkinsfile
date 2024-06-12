@@ -1,0 +1,9 @@
+@Library('jenkinslib') _
+
+nextWithDocker(
+    image: 'nextjs-docker',
+    registry: 'pisethsattya',
+    tag: '1.0',
+    containerPort: '80',
+    hostPort: '8088'
+);

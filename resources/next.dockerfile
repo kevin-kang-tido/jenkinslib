@@ -1,16 +1,32 @@
-FROM node:lts as build 
-WORKDIR /app 
-COPY package*.json ./ 
-RUN npm install  --force
-COPY . . 
+# Build stage
+FROM node:lts-alpine as build
+
+WORKDIR /app
+
+# Copy package.json and package-lock.json first to leverage Docker's layer caching
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install --only=production && npm cache clean --force
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the application
 RUN npm run build
 
 # Production stage
-FROM node:lts
+FROM node:lts-alpine
+
 WORKDIR /app
+
+# Copy built files from the previous stage
 COPY --from=build /app ./
-# copy the .env.production file
-# COPY --from=build /app/.env.production ./.env.production
-RUN npm install -g serve
+
+# Install serve globally
+RUN npm install -g serve --only=production && npm cache clean --force
+
 EXPOSE 3000
-CMD ["npm", "start"]
+
+# Serve the built application
+CMD ["serve", "-s", "build"]
