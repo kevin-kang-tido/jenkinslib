@@ -17,7 +17,7 @@ RUN npm install --only=production && npm cache clean --force
 COPY . .
 
 # Resolve TailwindCSS issue if applicable
-# RUN npm install tailwindcss
+RUN npm install tailwindcss
 
 # Build the application
 RUN npm run build
