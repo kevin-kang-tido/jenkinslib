@@ -6,5 +6,5 @@ angularDocker(
     tag: '2.0',
     containerPort: '80',
     hostPort: '4000',
-    projectName: 'angular-muyleang-Ing'
+    projectName: 'angular-muyleang-ing'
 )
