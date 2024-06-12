@@ -25,7 +25,7 @@ WORKDIR /usr/share/nginx/html
 
 # Copy the built Angular files from the previous stage
 ARG PROJECT_NAME
-COPY --from=build /app/dist/${PROJECT_NAME}/browser .
+COPY --from=build /app/dist/${PROJECT_NAME}/browser  /usr/share/nginx/html
 
 # Optional: Copy custom NGINX configuration file
 # COPY nginx.conf /etc/nginx/nginx.conf
