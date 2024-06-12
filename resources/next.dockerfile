@@ -14,7 +14,7 @@ RUN npm ci --only=production
 COPY . .
 
 # Build the Next.js application
-RUN npm run build
+RUN npm i && npm run build
 
 # Stage 2: Use a lightweight production image
 FROM node:alpine
