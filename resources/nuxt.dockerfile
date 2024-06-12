@@ -1,4 +1,4 @@
-# Use an official Node.js LTS (Long Term Support) image as a base
+# Stage 1: Build the Nuxt.js application
 FROM node:lts-alpine as build-stage
 
 # Set the working directory in the container
@@ -16,11 +16,17 @@ COPY . .
 # Build the Nuxt.js application for production
 RUN npm run build
 
-# Start a new stage for the production image
+# Stage 2: Serve the built application with NGINX
 FROM nginx:alpine as production-stage
 
 # Copy the built app from the previous stage to the NGINX directory
-COPY --from=build-stage /app/.nuxt/dist/server /usr/share/nginx/html
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+# Remove default NGINX configuration file
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Copy custom NGINX configuration
+COPY nginx/nginx.conf /etc/nginx/conf.d
 
 # Expose port 80 to the outside world
 EXPOSE 80
