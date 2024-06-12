@@ -10,6 +10,9 @@ COPY gradlew /app/gradlew
 COPY build.gradle /app/build.gradle
 COPY settings.gradle /app/settings.gradle
 
+# Set execute permission for the Gradle wrapper
+RUN chmod +x gradlew
+
 # Download dependencies (to leverage Docker cache)
 RUN ./gradlew build -x test --no-daemon || return 0
 
