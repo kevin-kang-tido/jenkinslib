@@ -4,7 +4,7 @@ FROM node:18-alpine AS builder
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
+# Copy package.json and package-lock.json (or yarn.lock) to the working directory
 COPY package*.json ./
 
 # Install dependencies
@@ -28,9 +28,11 @@ RUN npm install --only=production
 
 # Copy only the necessary files from the build stage
 COPY --from=builder /app/.nuxt ./.nuxt
-COPY --from=builder /app/static ./static
-COPY --from=builder /app/nuxt.config.js ./
 COPY --from=builder /app/package.json ./
+COPY --from=builder /app/nuxt.config.js ./
+
+# Conditionally copy the static directory if it exists
+COPY --from=builder /app/static ./static || true
 
 # Expose the port the app runs on
 EXPOSE 3000
