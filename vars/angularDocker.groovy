@@ -5,6 +5,7 @@ def call(Map config = [:]) {
     def tag = config.get('tag', 'latest')
     def containerPort = config.get('containerPort', '8080')
     def hostPort = config.get('hostPort', '8080')
+    def projectName = config.get('projectName','angular-muyleang-Ing')
     
     pipeline {
         agent any
@@ -33,7 +34,7 @@ def call(Map config = [:]) {
                     script {
                         echo "Building Docker image: ${registry}/${image}:${tag}"
                         sh """
-                            docker build --build-arg PROJECT_NAME=angular-muyleang-ing -t ${registry}/${image}:${tag} .
+                            docker build --build-arg PROJECT_NAME=${projectName}} -t ${registry}/${image}:${tag} .
                         """
                     }
                 }
