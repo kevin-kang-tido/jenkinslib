@@ -13,6 +13,7 @@ RUN npm ci --only=production
 # Copy the rest of the application code
 COPY . .
 
+RUN npm install
 # Build the Next.js application
 RUN npm run build
 
