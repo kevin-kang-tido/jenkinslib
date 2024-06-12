@@ -14,7 +14,8 @@ RUN npm install --silent
 COPY . .
 
 # Build the Angular application
-RUN npm run build --prod
+ARG PROJECT_NAME
+RUN npm run build --prod -- --output-path=dist/${PROJECT_NAME}/browser
 
 # Stage 2: Serve the application with NGINX
 FROM nginx:stable-alpine
@@ -23,7 +24,8 @@ FROM nginx:stable-alpine
 WORKDIR /usr/share/nginx/html
 
 # Copy the built Angular files from the previous stage
-COPY --from=build /app/dist/angular-muyleang-ing/browser .
+ARG PROJECT_NAME
+COPY --from=build /app/dist/${PROJECT_NAME}/browser .
 
 # Optional: Copy custom NGINX configuration file
 # COPY nginx.conf /etc/nginx/nginx.conf
