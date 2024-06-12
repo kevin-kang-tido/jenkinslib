@@ -1,7 +1,7 @@
 @Library(['jenkinslib']) _
 
 angularDocker(
-    image: 'angular-muyleang-Ing',
+    image: 'angular-muyleang-ing',
     registry: 'pisethsattya',
     tag: '2.0',
     containerPort: '80',
