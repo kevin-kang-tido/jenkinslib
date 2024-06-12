@@ -1,0 +1,10 @@
+@Library(['jenkinslib']) _
+
+vuejsDocker(
+    image: 'vue-framework',
+    registry: 'pisethsattya',
+    tag: '.0',
+    containerPort: '80',
+    hostPort: '3000',
+    projectName: 'vue-project'
+)
