@@ -16,6 +16,18 @@ def call(Map config = [:]) {
                 }
             }
 
+            stage('Prepare Dockerfile') {
+                steps {
+                    script {
+                        def writeDockerfile = {
+                            def dockerfileContent = libraryResource 'next.dockerfile'
+                            writeFile file: 'Dockerfile', text: dockerfileContent
+                        }
+                        writeDockerfile()
+                    }
+                }
+            }
+
             stage('Build Docker Image') {
                 steps {
                     script {
