@@ -1,29 +1,38 @@
-# Stage 1: Build the Nuxt.js application
-FROM node:lts-alpine AS build-stage
+# Stage 1: Base image
+FROM node:lts-alpine AS base
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy only the necessary files for installing dependencies
-COPY package.json package-lock.json ./
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm install
 
-# Copy the rest of the application code to the working directory
-COPY . .
+# Stage 2: Development stage
+FROM base AS development
+
+# Expose the port that the development server will run on
+EXPOSE 3000
+
+# Command to start the development server
+CMD ["npm", "run", "dev"]
+
+# Stage 3: Build stage
+FROM base AS build
 
 # Build the Nuxt.js application for production
 RUN npm run build
 
-# Stage 2: Serve the built application with NGINX
-FROM nginx:alpine AS production-stage
+# Stage 4: Production stage
+FROM nginx:alpine AS production
 
-# Copy the built app from the previous stage to the NGINX directory
-COPY --from=build-stage /app/.nuxt/dist/client /usr/share/nginx/html
+# Copy built files from the previous stage to NGINX directory
+COPY --from=build /app/dist /usr/share/nginx/html
 
 # Expose port 80 to the outside world
 EXPOSE 80
 
-# Command to run the NGINX server
+# Command to start NGINX
 CMD ["nginx", "-g", "daemon off;"]
