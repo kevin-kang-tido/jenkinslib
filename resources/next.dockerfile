@@ -1,41 +1,32 @@
-# Use Node.js LTS version as base image
-FROM node:lts-alpine as build
+# Stage 1: Build the Next.js application
+FROM node:alpine AS build
 
-# Set environment variable to disable telemetry
-ENV NEXT_TELEMETRY_DISABLED=1
-
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json to leverage Docker's layer caching
-COPY package*.json ./
+# Copy package.json and package-lock.json to the working directory
+COPY package.json package-lock.json ./
 
 # Install dependencies
-RUN npm install --only=production && npm cache clean --force
+RUN npm ci --quiet
 
 # Copy the rest of the application code
 COPY . .
 
-# Resolve TailwindCSS issue if applicable
-RUN npm install tailwindcss
-
-# Build the application
+# Build the Next.js application
 RUN npm run build
 
-# Production stage
-FROM node:lts-alpine
+# Stage 2: Use Nginx to serve the built Next.js application
+FROM nginx:alpine
 
-# Set working directory
-WORKDIR /app
+# Copy the built Next.js application from the previous stage to Nginx directory
+COPY --from=build /app/.next /usr/share/nginx/html
 
-# Copy built files from the previous stage
-COPY --from=build /app ./
+# Copy nginx configuration file
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
-# Install serve globally to serve the application
-RUN npm install -g serve --only=production && npm cache clean --force
+# Expose the port Nginx listens on
+EXPOSE 80
 
-# Expose port 3000
-EXPOSE 3000
-
-# Serve the built application
-CMD ["serve", "-s", "build"]
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
