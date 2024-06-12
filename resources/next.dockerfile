@@ -1,6 +1,9 @@
 # Use Node.js LTS version as base image
 FROM node:lts-alpine as build
 
+# Set environment variable to disable telemetry
+ENV NEXT_TELEMETRY_DISABLED=1
+
 # Set working directory
 WORKDIR /app
 
@@ -12,6 +15,9 @@ RUN npm install --only=production && npm cache clean --force
 
 # Copy the rest of the application code
 COPY . .
+
+# Resolve TailwindCSS issue if applicable
+# RUN npm install tailwindcss
 
 # Build the application
 RUN npm run build
