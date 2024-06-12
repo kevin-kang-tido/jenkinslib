@@ -33,7 +33,6 @@ def call(Map config = [:]) {
                     script {
                         echo "Building Docker image: ${registry}/${image}:${tag}"
                         sh """
-                        //  docker build -t ${registry}/${image}:${tag} .
                             docker build --build-arg PROJECT_NAME=angular-muyleang-ing -t ${registry}/${image}:${tag} .
                         """
                     }
