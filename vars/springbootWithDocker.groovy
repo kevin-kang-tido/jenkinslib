@@ -29,16 +29,16 @@ def call(Map config = [:]) {
                 }
             }
 
-            // stage('Build Docker Image') {
-            //     steps {
-            //         script {
-            //             echo "Building Docker image: ${registry}/${image}:${tag}"
-            //             sh """
-            //                 docker build --build-arg PROJECT_NAME=${projectName} -t ${registry}/${image}:${tag} .
-            //             """
-            //         }
-            //     }
-            // }
+            stage('Build Docker Image') {
+                steps {
+                    script {
+                        echo "Building Docker image: ${registry}/${image}:${tag}"
+                        sh """
+                            docker build --build-arg PROJECT_NAME=${projectName} -t ${registry}/${image}:${tag} .
+                        """
+                    }
+                }
+            }
 
             // stage('Docker Hub Login and Push') {
             //     steps {
