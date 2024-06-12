@@ -1,14 +1,14 @@
 # Stage 1: Build the Next.js application
-FROM node:alpine AS build
+FROM node:lts as build
 
 # Set the working directory in the container
 WORKDIR /app
 
 # Copy package.json and package-lock.json to the working directory
-COPY package.json package-lock.json ./
+COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --quiet
+RUN npm ci --quiet --no-optional --unsafe-perm
 
 # Copy the rest of the application code
 COPY . .
@@ -16,14 +16,20 @@ COPY . .
 # Build the Next.js application
 RUN npm run build
 
-# Stage 2: Use Nginx to serve the built Next.js application
-FROM nginx:alpine
+# Stage 2: Production stage
+FROM node:lts-slim
 
-# Copy the built Next.js application from the previous stage to Nginx directory
-COPY --from=build /app/.next/server/app /usr/share/nginx/html
+# Set the working directory in the container
+WORKDIR /app
 
-# Expose the port Nginx listens on
-EXPOSE 80
+# Copy the built Next.js application from the previous stage to the current stage
+COPY --from=build /app ./
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Install serve globally for serving the Next.js application
+RUN npm install -g serve && npm cache clean --force
+
+# Expose the port Next.js runs on
+EXPOSE 3000
+
+# Start the Next.js application
+CMD ["serve", "-s", ".", "-p", "3000"]
