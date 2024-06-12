@@ -29,7 +29,9 @@ RUN npm install --only=production
 # Copy only the necessary files from the build stage
 COPY --from=builder /app/.nuxt ./.nuxt
 COPY --from=builder /app/package.json ./
-COPY --from=builder /app/nuxt.config.js ./
+
+# Conditionally copy the nuxt.config.js file if it exists
+COPY --from=builder /app/nuxt.config.js ./nuxt.config.js || true
 
 # Conditionally copy the static directory if it exists
 COPY --from=builder /app/static ./static || true
