@@ -1,10 +1,10 @@
-# Use Node.js LTS Alpine as the base image for both stages
+# Use a lightweight base image for both stages
 FROM node:lts-alpine AS build-stage
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
+# Copy only package.json and package-lock.json to the working directory
 COPY package*.json ./
 
 # Install dependencies
@@ -16,7 +16,7 @@ COPY . .
 # Build the Nuxt.js application for production
 RUN npm run build
 
-# Use a smaller base image for the production stage
+# Use an even smaller base image for the production stage
 FROM node:lts-alpine AS production-stage
 
 # Set the working directory in the container
