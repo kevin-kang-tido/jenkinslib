@@ -1,10 +1,10 @@
 @Library(['jenkinslib']) _
 
 nuxtDocker(
-    image: 'nuxt-framework',
+    image: 'nuxt-js',
     registry: 'pisethsattya',
     tag: '1.0',
     containerPort: '3000',
     hostPort: '3000',
-    projectName: 'nuxt-project'
+    projectName: 'nuxtjs'
 )
