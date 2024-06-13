@@ -1,38 +1,47 @@
-# Stage 1: Build the application
-FROM node:alpine AS builder
+# Use an official Node.js runtime as a parent image
+FROM node:18-alpine AS builder
 
-# Set the working directory
+RUN apk add --no-cache libc6-compat
+
+# Set the working directory to /app
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
+# Copy the package.json and package-lock.json files to the container
 COPY package.json package-lock.json ./
 
-# Install dependencies
-RUN npm ci --only=production
-
-# Copy the rest of the application code
+# Copy all other project files to working directory
 COPY . .
 
-# Build the Next.js application
-RUN npm i && npm run build
+# if use Image
+RUN npm i sharp
 
-# Stage 2: Use a lightweight production image
-FROM node:alpine
+# Run the next build process and generate the artifacts
+RUN npm run build
 
-# Set the working directory
+# Multi-stage build process
+FROM node:18-alpine
+
+# update and install latest dependencies, add dumb-init package
+# add a non-root user
+RUN apk update && apk upgrade && apk add dumb-init && adduser -D nextuser
+
+# Set work dir as app
 WORKDIR /app
 
-# Copy only the built artifacts and essential files from the previous stage
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/package-lock.json ./package-lock.json
+# Copy the public folder from the project as this is not included in the build process
+COPY --chown=nextuser:nextuser --from=builder /app/public ./public
 
-# Install production dependencies
-RUN npm ci --only=production
+# Copy the standalone folder inside the .next folder generated from the build process
+COPY --chown=nextuser:nextuser --from=builder /app/.next/standalone ./
 
-# Expose the port Next.js runs on
+# Copy the static folder inside the .next folder generated from the build process
+COPY --chown=nextuser:nextuser --from=builder /app/.next/static ./.next/static
+# Set non-root user
+USER nextuser
+
 EXPOSE 3000
 
-# Set the command to run the application
-CMD ["npm", "start"]
+ENV HOST=0.0.0.0 PORT=3000 NODE_ENV=production
+
+# Start the application
+CMD ["dumb-init","node","server.js"]
