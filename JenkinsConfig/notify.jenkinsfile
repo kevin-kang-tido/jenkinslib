@@ -22,7 +22,7 @@
 
             stage('Test Notification') {
                 steps {
-                      sh ' curl -s -X POST https://api.telegram.org/bot${env.BotToken}/sendMessage -d chat_id=${env.chat_id} -d text="Good Morning KAK developer!" '
+                      sh ' curl -s -X POST \"https://api.telegram.org/bot${env.BotToken}/sendMessage\" -d chat_id=${env.chat_id} -d text="Good Morning KAK developer!" '
                 }
             }
 
