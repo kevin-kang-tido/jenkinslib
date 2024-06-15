@@ -20,8 +20,8 @@ pipeline {
 
         stage('Test Notification') {
             steps {
-                withCredentials([string(credentialsId: 'telegram-bot-token', variable: 'BotToken')]) {
-                    sh "curl -s -X POST \"https://api.telegram.org/bot${BotToken}/sendMessage\" -d chat_id=${env.chat_id} -d text=\"Good Morning KAK developer!\""
+                withCredentials([string(credentialsId: 'telegram-bot-token', variable: 'telegramToken')]) {
+                     sh "curl -s -X POST \"https://api.telegram.org/bot${telegramToken}/sendMessage\" -d chat_id=${env.chat_id} -d text=\"Good Morning KAK developer!\""
                 }
             }
         }
