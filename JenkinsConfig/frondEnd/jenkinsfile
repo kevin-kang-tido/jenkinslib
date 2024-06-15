@@ -2,7 +2,7 @@ pipeline {
     agent any
     parameters{
         choice(name: "branch", choices: ["production", "staging", "development"], description: "Sample multi-choice parameter")
-
+        text(name: "expose_port", defaultValue: "8080", description: "for expose port")
     }
     stages {
         stage('Git clone with choice ') {
@@ -21,6 +21,16 @@ pipeline {
 
                     }
                 }
+            }
+        }
+        stage('build with dockerfile'){
+            steps{
+                sh 'docker build -t reactwithchoice:${BUILD_NUMBER} -f react-dockerfile .'
+            }
+        }
+        stage('deploy'){
+            steps{
+                sh 'docker run -d -p ${params.expose_port}:80 reactwithchoice:${BUILD_NUMBER} '
             }
         }
     }
