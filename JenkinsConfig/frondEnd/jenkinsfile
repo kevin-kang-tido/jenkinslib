@@ -30,7 +30,7 @@ pipeline {
         }
         stage('deploy'){
             steps{
-                sh 'docker run -d -p ${params.expose_port}:80 reactwithchoice:${BUILD_NUMBER} '
+                sh 'docker run -d -p ${expose_port}:80 reactwithchoice:${BUILD_NUMBER} '
             }
         }
     }
