@@ -1,14 +1,26 @@
 pipeline {
     agent any
-    // parameters{
-    //     choice(name: "TEST_CHOICE", choices: ["production", "staging", "development"], description: "Sample 
-    //     multi-choice parameter")
+    parameters{
+        choice(name: "branch", choices: ["production", "staging", "development"], description: "Sample multi-choice parameter")
 
-    // }
+    }
     stages {
-        stage('Git clone with choice') {
+        stage('Git clone with choice ') {
             steps {
-                echo 'Hello World'
+                script{
+                    if (params.branch == 'production' ){
+                        echo " production"
+                        git branch:'main' , url: 'https://github.com/MuyleangIng/reactjs-with-dockerfile'
+                    } else if (params.branch == 'staging'){
+                        echo " staging"
+                        git branch:'master' , url: 'https://github.com/MuyleangIng/reactjs-with-dockerfile'
+
+                    } else {
+                        echo " development"
+                        git branch:'developer' , url: 'https://github.com/MuyleangIng/reactjs-with-dockerfile'
+
+                    }
+                }
             }
         }
     }
