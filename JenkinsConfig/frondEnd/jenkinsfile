@@ -1,10 +1,10 @@
 pipeline {
     agent any
-    parameters{
-        choice(name: "TEST_CHOICE", choices: ["production", "staging", "development"], description: "Sample 
-        multi-choice parameter")
+    // parameters{
+    //     choice(name: "TEST_CHOICE", choices: ["production", "staging", "development"], description: "Sample 
+    //     multi-choice parameter")
 
-    }
+    // }
     stages {
         stage('Git clone with choice') {
             steps {
