@@ -7,6 +7,13 @@
         }
 
         stages {
+
+            stage('clean work space') {
+                steps {
+                    cleanWs()
+                }
+            }
+
             stage('Git Clone') {
                 steps {
                     git branch: 'main', url: 'https://github.com/SattyaPiseth/nextjs-framework.git'
@@ -19,10 +26,5 @@
                 }
             }
 
-            stage('list directory') {
-                steps {
-                    sh "ls -lrt"
-                }
-            }
         }
     }
